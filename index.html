@@ -14,12 +14,21 @@
         * {
             text-align: center;
         }
+
+        .notice {
+            color: grey;
+            font-size: small;
+        }
     </style>
 </head>
 
 <body>
+    <main>
+
+    </main>
+    <p class="notice">Не се обновява автоматично.</p>
+    <p class="notice">Doesn't update automatically.</p>
     <script>
-        setInterval(() => { location.reload(); }, 10 * 1000);
         const host = location.host;
 
         (async () => {
@@ -28,7 +37,7 @@
 
             let temps = Object.keys(json);
             temps.forEach(t => {
-                document.body.innerHTML += `
+                document.querySelector("main").innerHTML += `
                     <div>
                         <h3>${t}</h3>
                         <p>(${json[t].x-500}, ${json[t].y-500})</p>
