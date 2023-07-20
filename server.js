@@ -81,7 +81,7 @@ http.createServer((req, res) => {
         }
     }
 
-    else if (req.method == "PATCH" && pathname == "/changeThunmb") {
+    else if (req.method == "PATCH" && pathname == "/changeThumb") {
         if (req.headers.auth && req.headers.auth == process.env.PASSWORD) {
             if (req.headers['content-type'] == "image/png" && query.imgname && db[query.imgname]) {
                 const newFileName = `${getUUID()}.png`;
