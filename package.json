@@ -1,0 +1,29 @@
+{
+  "name": "rplace-host-template",
+  "version": "1.0.0",
+  "description": "Host for r/place templates",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GiggioG/rplace-host-template.git"
+  },
+  "keywords": [
+    "r/place",
+    "place",
+    "reddit",
+    "host",
+    "nodejs"
+  ],
+  "author": "Gigo_G",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GiggioG/rplace-host-template/issues"
+  },
+  "homepage": "https://github.com/GiggioG/rplace-host-template#readme",
+  "dependencies": {
+    "dotenv": "^16.3.1"
+  }
+}
