@@ -8,6 +8,7 @@
     <style>
         img {
             border: 1px solid black;
+            background: repeating-linear-gradient(45deg, black, white 4px);
         }
 
         * {
@@ -30,7 +31,7 @@
                 document.body.innerHTML += `
                     <div>
                         <h3>${t}</h3>
-                        <p>${json[t].x}, ${json[t].y}</p>
+                        <p>(${json[t].x-500}, ${json[t].y-500})</p>
                         <img src="https://${host}/thumb?imgname=${t}">
                         <hr>
                     </div>
