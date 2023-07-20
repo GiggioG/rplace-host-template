@@ -45,7 +45,7 @@ http.createServer((req, res) => {
     }
 
     else if (req.method == "POST" && pathname == "/upload") {
-        if (req.headers.auth && req.headers.auth == process.env.PWD) {
+        if (req.headers.auth && req.headers.auth == process.env.PASSWORD) {
             if (req.headers['content-type'] == "image/png" && query.imgname && query.x && query.y
                 && Number(query.x) != NaN && Number(query.y) != NaN && !db[query.imgname]) {
                 const fileName = `${getUUID()}.png`;
@@ -69,7 +69,7 @@ http.createServer((req, res) => {
     }
 
     else if (req.method == "DELETE" && pathname == "/remove") {
-        if (req.headers.auth && req.headers.auth == process.env.PWD) {
+        if (req.headers.auth && req.headers.auth == process.env.PASSWORD) {
             if (query.imgname && db[query.imgname]) {
                 const filePath = "./imgs/" + db[query.imgname].img;
                 fs.unlinkSync(filePath);
