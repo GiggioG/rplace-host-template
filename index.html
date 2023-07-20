@@ -9,12 +9,16 @@
         img {
             border: 1px solid black;
         }
+
+        * {
+            text-align: center;
+        }
     </style>
 </head>
 
 <body>
     <script>
-        setInterval(location.reload, 10 * 1000);
+        setInterval(() => { location.reload(); }, 10 * 1000);
         const host = location.host;
 
         (async () => {
