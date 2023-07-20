@@ -46,6 +46,12 @@ http.createServer((req, res) => {
         } else {
             return codeError(res, 404);
         }
+    } else if (req.method == "GET" && pathname == "/thumb") {
+        if (query.imgname && db[query.imgname] && db[query.imgname].thumb != null) {
+            return serveFile(res, `./imgs/${db[query.imgname].thumb}`);
+        } else {
+            return codeError(res, 404);
+        }
     } else if (req.method == "GET" && pathname == "/index.json") {
         return serveFile(res, `./db.json`);
     }
@@ -59,7 +65,8 @@ http.createServer((req, res) => {
                 db[query.imgname] = {
                     x: Number(query.x),
                     y: Number(query.y),
-                    img: fileName
+                    img: fileName,
+                    thumb: null,
                 };
                 saveDB();
                 req.pipe(fs.createWriteStream(filePath));
@@ -74,7 +81,32 @@ http.createServer((req, res) => {
         }
     }
 
-    else if (req.method == "PATCH" && pathname == "/move") {
+    else if (req.method == "PATCH" && pathname == "/changeThunmb") {
+        if (req.headers.auth && req.headers.auth == process.env.PASSWORD) {
+            if (req.headers['content-type'] == "image/png" && query.imgname && db[query.imgname]) {
+                const newFileName = `${getUUID()}.png`;
+
+                const newFilePath = "./imgs/" + newFileName;
+                req.pipe(fs.createWriteStream(newFilePath));
+
+                if(db[query.imgname].thumb != null){
+                    const oldFilePath = "./imgs/" + db[query.imgname].thumb;
+                    fs.unlinkSync(oldFilePath);
+                }
+
+                db[query.imgname].thumb = newFileName;
+                saveDB();
+
+                req.on("end", () => {
+                    return codeError(res, 200);
+                });
+            } else {
+                return codeError(res, 400);
+            }
+        } else {
+            return codeError(res, 401);
+        }
+    } else if (req.method == "PATCH" && pathname == "/move") {
         if (req.headers.auth && req.headers.auth == process.env.PASSWORD) {
             if (query.imgname && query.x && query.y
                 && Number(query.x) != NaN && Number(query.y) != NaN && db[query.imgname]) {
@@ -96,12 +128,12 @@ http.createServer((req, res) => {
 
                 const oldFilePath = "./imgs/" + db[query.imgname].img;
                 fs.unlinkSync(oldFilePath);
-                
+
                 db[query.imgname].img = newFileName;
                 saveDB();
-                
+
                 req.on("end", () => {
-                    return codeError(res, 200, query.imgname);
+                    return codeError(res, 200);
                 });
             } else {
                 return codeError(res, 400);
