@@ -14,6 +14,12 @@ if (!fs.existsSync("./imgs")) { fs.mkdirSync("./imgs"); }
 const getUUID = () => crypto.randomBytes(16).toString("hex");
 
 function serveFile(res, file) {
+    res.writeHead(200, {
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET,OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type"
+    });
     fs.createReadStream(file).pipe(res);
 }
 
