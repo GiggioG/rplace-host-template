@@ -83,8 +83,17 @@ http.createServer((req, res) => {
     } else if (req.method == "PATCH" && pathname == "/edit") {
         if (req.headers.auth && req.headers.auth == process.env.PASSWORD) {
             if (req.headers['content-type'] == "image/png" && query.imgname && db[query.imgname]) {
-                const filePath = "./imgs/" + db[query.imgname].img;
-                req.pipe(fs.createWriteStream(filePath));
+                const newFileName = `${getUUID()}.png`;
+
+                const newFilePath = "./imgs/" + newFileName;
+                req.pipe(fs.createWriteStream(newFilePath));
+
+                const oldFilePath = "./imgs/" + db[query.imgname].img;
+                fs.unlinkSync(oldFilePath);
+                
+                db[query.imgname].img = newFileName;
+                saveDB();
+                
                 req.on("end", () => {
                     return codeError(res, 200, query.imgname);
                 });
