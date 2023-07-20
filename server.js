@@ -54,6 +54,8 @@ http.createServer((req, res) => {
         }
     } else if (req.method == "GET" && pathname == "/index.json") {
         return serveFile(res, `./db.json`);
+    } else if (req.method == "GET" && (pathname == "/index.html" || pathname == "")) {
+        return serveFile(res, `./index.html`);
     }
 
     else if (req.method == "POST" && pathname == "/upload") {
@@ -89,7 +91,7 @@ http.createServer((req, res) => {
                 const newFilePath = "./imgs/" + newFileName;
                 req.pipe(fs.createWriteStream(newFilePath));
 
-                if(db[query.imgname].thumb != null){
+                if (db[query.imgname].thumb != null) {
                     const oldFilePath = "./imgs/" + db[query.imgname].thumb;
                     fs.unlinkSync(oldFilePath);
                 }

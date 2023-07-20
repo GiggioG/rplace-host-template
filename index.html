@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview</title>
+    <style>
+        img {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        setInterval(location.reload, 10 * 1000);
+        const host = location.host;
+
+        (async () => {
+            let resp = await fetch(`https://${host}/index.json`);
+            let json = await resp.json();
+
+            let temps = Object.keys(json);
+            temps.forEach(t => {
+                document.body.innerHTML += `
+                    <div>
+                        <h3>${t}</h3>
+                        <p>${json[t].x}, ${json[t].y}</p>
+                        <img src="https://${host}/thumb?imgname=${t}">
+                        <hr>
+                    </div>
+                `;
+            });
+        })();
+    </script>
+</body>
+
+</html>
