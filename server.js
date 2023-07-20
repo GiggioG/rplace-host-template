@@ -95,6 +95,11 @@ http.createServer((req, res) => {
                 saveDB();
                 
                 req.on("end", () => {
+                    db[query.imgname].img = `${getUUID()}.png`;
+                    saveDB();
+    
+                    const oldFilePath = "./imgs/" + db[query.imgname].img;
+                    fs.unlinkSync(oldFilePath);
                     return codeError(res, 200, query.imgname);
                 });
             } else {
