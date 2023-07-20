@@ -72,8 +72,8 @@ http.createServer((req, res) => {
         if (req.headers.auth && req.headers.auth == process.env.PASSWORD) {
             if (query.imgname && query.x && query.y
                 && Number(query.x) != NaN && Number(query.y) != NaN && db[query.imgname]) {
-                db[query.imgname].x = query.x;
-                db[query.imgname].y = query.y;
+                db[query.imgname].x = Number(query.x);
+                db[query.imgname].y = Number(query.y);
                 saveDB();
                 return codeError(res, 200);
             }
