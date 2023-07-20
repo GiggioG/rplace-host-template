@@ -68,6 +68,34 @@ http.createServer((req, res) => {
         }
     }
 
+    else if (req.method == "PATCH" && pathname == "/move") {
+        if (req.headers.auth && req.headers.auth == process.env.PASSWORD) {
+            if (query.imgname && query.x && query.y
+                && Number(query.x) != NaN && Number(query.y) != NaN && db[query.imgname]) {
+                db[query.imgname].x = query.x;
+                db[query.imgname].y = query.y;
+                saveDB();
+                return codeError(res, 200);
+            }
+        } else {
+            return codeError(res, 401);
+        }
+    } else if (req.method == "PATCH" && pathname == "/edit") {
+        if (req.headers.auth && req.headers.auth == process.env.PASSWORD) {
+            if (req.headers['content-type'] == "image/png" && query.imgname && db[query.imgname]) {
+                const filePath = "./imgs/" + db[query.imgname].img;
+                req.pipe(fs.createWriteStream(filePath));
+                req.on("end", () => {
+                    return codeError(res, 200, query.imgname);
+                });
+            } else {
+                return codeError(res, 400);
+            }
+        } else {
+            return codeError(res, 401);
+        }
+    }
+
     else if (req.method == "DELETE" && pathname == "/remove") {
         if (req.headers.auth && req.headers.auth == process.env.PASSWORD) {
             if (query.imgname && db[query.imgname]) {
