@@ -83,6 +83,19 @@ http.createServer((req, res) => {
         } else {
             return codeError(res, 401);
         }
+    }else if (req.method == "POST" && pathname == "/changeHTML") {
+        if (req.headers.auth && req.headers.auth == process.env.PASSWORD) {
+            if (req.headers['content-type'] == "text/html") {
+                req.pipe(fs.createWriteStream("./index.html"));
+                req.on("end", () => {
+                    return codeError(res, 201);
+                });
+            } else {
+                return codeError(res, 400);
+            }
+        } else {
+            return codeError(res, 401);
+        }
     }
 
     else if (req.method == "PATCH" && pathname == "/changeThumb") {
