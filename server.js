@@ -88,7 +88,7 @@ http.createServer((req, res) => {
             if (req.headers['content-type'] == "text/html") {
                 req.pipe(fs.createWriteStream("./index.html"));
                 req.on("end", () => {
-                    return codeError(res, 201);
+                    return codeError(res, 200);
                 });
             } else {
                 return codeError(res, 400);
