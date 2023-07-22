@@ -60,8 +60,9 @@ http.createServer((req, res) => {
 
     else if (req.method == "POST" && pathname == "/upload") {
         if (req.headers.auth && req.headers.auth == process.env.PASSWORD) {
-            if (req.headers['content-type'] == "image/png" && query.imgname && query.x && query.y
-                && Number(query.x) != NaN && Number(query.y) != NaN && !db.templates[query.imgname]) {
+            if (req.headers['content-type'] == "image/png" && query.imgname && query.x && query.y && query.priority
+                && Number(query.x) != NaN && Number(query.y) != NaN && Number(query.priority) != NaN
+                && !db.templates[query.imgname]) {
                 const fileName = `${getUUID()}.png`;
                 const filePath = "./imgs/" + fileName;
                 db.templates[query.imgname] = {
@@ -69,25 +70,13 @@ http.createServer((req, res) => {
                     y: Number(query.y),
                     img: fileName,
                     thumb: null,
+                    priority: Number(query.priority)
                 };
                 saveDB();
                 req.pipe(fs.createWriteStream(filePath));
                 req.on("end", () => {
                     return codeError(res, 201, query.imgname);
                 });
-            } else {
-                return codeError(res, 400);
-            }
-        } else {
-            return codeError(res, 401);
-        }
-    }else if(req.method == "POST" && pathname == "/topLeft"){
-        if (req.headers.auth && req.headers.auth == process.env.PASSWORD) {
-            if (query.x && query.y && Number(query.x) != NaN && Number(query.y) != NaN) {
-                db.topLeft.x = Number(query.x);
-                db.topLeft.y = Number(query.y);
-                saveDB();
-                codeError(res, 200);
             } else {
                 return codeError(res, 400);
             }
@@ -152,6 +141,16 @@ http.createServer((req, res) => {
                 });
             } else {
                 return codeError(res, 400);
+            }
+        } else {
+            return codeError(res, 401);
+        }
+    } else if (req.method == "PATCH" && pathname == "/priority") {
+        if (req.headers.auth && req.headers.auth == process.env.PASSWORD) {
+            if (query.imgname && query.priority && Number(query.priority) != NaN && db.templates[query.imgname]) {
+                db.templates[query.imgname].priority = Number(query.priority);
+                saveDB();
+                return codeError(res, 200);
             }
         } else {
             return codeError(res, 401);

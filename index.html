@@ -41,7 +41,8 @@
                 document.querySelector("main").innerHTML += `
                     <div>
                         <h3>${t}</h3>
-                        <p>(${json[t].x}, ${json[t].y})</p>
+                        <p>(${json[t].x}, ${json[t].y})<br>
+                        Priority: ${json[t].priority}</p>
                         <img src="https://${host}/thumb?imgname=${t}">
                         <hr>
                     </div>
