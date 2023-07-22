@@ -7,27 +7,31 @@ module.exports.initDB = function () {
                 x: -1000,
                 y: -500
             },
-            getCanvasIndex: (function (x, y) {
-                let canvasIndex;
-                if (y < 500) {
-                    canvasIndex = 0;
-                    y += 500;
-                } else if (y >= 500) {
-                    canvasIndex = 3;
-                    y -= 500;
-                }
+            getCanvasIndex: `
+                = $ci 0
+                = $rx $x
+                = $ry $y
 
-                if (x < 500) {
-                    x += 500;
-                } else if (x >= 500 && x < 1500) {
-                    x -= 500;
-                    canvasIndex += 1;
-                } else if (x >= 1500) {
-                    x -= 1500;
-                    canvasIndex += 2;
-                }
-                return { x, y, canvasIndex };
-            }).toString()
+
+                if $y < 500 = $ci 0
+                if $y < 500 += $ry 500
+
+                if $y >= 500 = $ci 3
+                if $y >= 500 -= $ry 500
+
+
+                if $x < 500 += $rx 500
+
+                if $x >= 500 if $x < 1500 -= $rx 500
+                if $x >= 500 if $x < 1500 += $ci 1
+
+                if $x >= 1500 -= $rx 1500
+                if $x >= 1500 += $ci 2
+
+                return $rx x
+                return $ry y
+                return $ci canvasIndex
+            `
         }));
     }
     global.db = require("./db.json");
