@@ -34,6 +34,7 @@
         (async () => {
             let resp = await fetch(`https://${host}/index.json`);
             let json = await resp.json();
+            json = json.templates
 
             let temps = Object.keys(json);
             temps.forEach(t => {

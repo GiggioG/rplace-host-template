@@ -41,14 +41,14 @@ http.createServer((req, res) => {
     let query = qs.parse(url.parse(req.url).query);
 
     if (req.method == "GET" && pathname == "/img") {
-        if (query.imgname && db[query.imgname]) {
-            return serveFile(res, `./imgs/${db[query.imgname].img}`);
+        if (query.imgname && db.templates[query.imgname]) {
+            return serveFile(res, `./imgs/${db.templates[query.imgname].img}`);
         } else {
             return codeError(res, 404);
         }
     } else if (req.method == "GET" && pathname == "/thumb") {
-        if (query.imgname && db[query.imgname] && db[query.imgname].thumb != null) {
-            return serveFile(res, `./imgs/${db[query.imgname].thumb}`);
+        if (query.imgname && db.templates[query.imgname] && db.templates[query.imgname].thumb != null) {
+            return serveFile(res, `./imgs/${db.templates[query.imgname].thumb}`);
         } else {
             return codeError(res, 404);
         }
@@ -61,10 +61,10 @@ http.createServer((req, res) => {
     else if (req.method == "POST" && pathname == "/upload") {
         if (req.headers.auth && req.headers.auth == process.env.PASSWORD) {
             if (req.headers['content-type'] == "image/png" && query.imgname && query.x && query.y
-                && Number(query.x) != NaN && Number(query.y) != NaN && !db[query.imgname]) {
+                && Number(query.x) != NaN && Number(query.y) != NaN && !db.templates[query.imgname]) {
                 const fileName = `${getUUID()}.png`;
                 const filePath = "./imgs/" + fileName;
-                db[query.imgname] = {
+                db.templates[query.imgname] = {
                     x: Number(query.x),
                     y: Number(query.y),
                     img: fileName,
@@ -81,22 +81,35 @@ http.createServer((req, res) => {
         } else {
             return codeError(res, 401);
         }
+    }else if(req.method == "POST" && pathname == "/topLeft"){
+        if (req.headers.auth && req.headers.auth == process.env.PASSWORD) {
+            if (query.x && query.y && Number(query.x) != NaN && Number(query.y) != NaN) {
+                db.topLeft.x = Number(query.x);
+                db.topLeft.y = Number(query.y);
+                saveDB();
+                codeError(res, 200);
+            } else {
+                return codeError(res, 400);
+            }
+        } else {
+            return codeError(res, 401);
+        }
     }
 
     else if (req.method == "PATCH" && pathname == "/changeThumb") {
         if (req.headers.auth && req.headers.auth == process.env.PASSWORD) {
-            if (req.headers['content-type'] == "image/png" && query.imgname && db[query.imgname]) {
+            if (req.headers['content-type'] == "image/png" && query.imgname && db.templates[query.imgname]) {
                 const newFileName = `${getUUID()}.png`;
 
                 const newFilePath = "./imgs/" + newFileName;
                 req.pipe(fs.createWriteStream(newFilePath));
 
-                if (db[query.imgname].thumb != null) {
-                    const oldFilePath = "./imgs/" + db[query.imgname].thumb;
+                if (db.templates[query.imgname].thumb != null) {
+                    const oldFilePath = "./imgs/" + db.templates[query.imgname].thumb;
                     fs.unlinkSync(oldFilePath);
                 }
 
-                db[query.imgname].thumb = newFileName;
+                db.templates[query.imgname].thumb = newFileName;
                 saveDB();
 
                 req.on("end", () => {
@@ -111,9 +124,9 @@ http.createServer((req, res) => {
     } else if (req.method == "PATCH" && pathname == "/move") {
         if (req.headers.auth && req.headers.auth == process.env.PASSWORD) {
             if (query.imgname && query.x && query.y
-                && Number(query.x) != NaN && Number(query.y) != NaN && db[query.imgname]) {
-                db[query.imgname].x = Number(query.x);
-                db[query.imgname].y = Number(query.y);
+                && Number(query.x) != NaN && Number(query.y) != NaN && db.templates[query.imgname]) {
+                db.templates[query.imgname].x = Number(query.x);
+                db.templates[query.imgname].y = Number(query.y);
                 saveDB();
                 return codeError(res, 200);
             }
@@ -122,16 +135,16 @@ http.createServer((req, res) => {
         }
     } else if (req.method == "PATCH" && pathname == "/edit") {
         if (req.headers.auth && req.headers.auth == process.env.PASSWORD) {
-            if (req.headers['content-type'] == "image/png" && query.imgname && db[query.imgname]) {
+            if (req.headers['content-type'] == "image/png" && query.imgname && db.templates[query.imgname]) {
                 const newFileName = `${getUUID()}.png`;
 
                 const newFilePath = "./imgs/" + newFileName;
                 req.pipe(fs.createWriteStream(newFilePath));
 
-                const oldFilePath = "./imgs/" + db[query.imgname].img;
+                const oldFilePath = "./imgs/" + db.templates[query.imgname].img;
                 fs.unlinkSync(oldFilePath);
 
-                db[query.imgname].img = newFileName;
+                db.templates[query.imgname].img = newFileName;
                 saveDB();
 
                 req.on("end", () => {
@@ -147,10 +160,10 @@ http.createServer((req, res) => {
 
     else if (req.method == "DELETE" && pathname == "/remove") {
         if (req.headers.auth && req.headers.auth == process.env.PASSWORD) {
-            if (query.imgname && db[query.imgname]) {
-                const filePath = "./imgs/" + db[query.imgname].img;
+            if (query.imgname && db.templates[query.imgname]) {
+                const filePath = "./imgs/" + db.templates[query.imgname].img;
                 fs.unlinkSync(filePath);
-                delete db[query.imgname];
+                delete db.templates[query.imgname];
                 saveDB();
                 return codeError(res, 200);
             } else {
