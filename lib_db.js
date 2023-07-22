@@ -5,7 +5,7 @@ module.exports.initDB = function () {
             templates: {},
             topLeft: {
                 x: -1000,
-                y: -500
+                y: -1000
             },
             getCanvasIndex: `
                 = $ci 0
@@ -13,11 +13,10 @@ module.exports.initDB = function () {
                 = $ry $y
 
 
-                if $y < 500 = $ci 0
-                if $y < 500 += $ry 500
+                if $y < 1000 = $ci 0
 
-                if $y >= 500 = $ci 3
-                if $y >= 500 -= $ry 500
+                if $y >= 1000 = $ci 3
+                if $y >= 1000 -= $ry 1000
 
 
                 if $x < 500 += $rx 500
