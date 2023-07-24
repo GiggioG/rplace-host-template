@@ -4,7 +4,7 @@ module.exports.initDB = function () {
         fs.writeFileSync("./db.json", JSON.stringify({
             templates: {},
             topLeft: {
-                x: -1000,
+                x: -1500,
                 y: -1000
             },
             getCanvasIndex: `
@@ -19,13 +19,11 @@ module.exports.initDB = function () {
                 if $y >= 1000 -= $ry 1000
 
 
-                if $x < 500 += $rx 500
+                if $x >= 1000 if $x < 2000 -= $rx 1000
+                if $x >= 5000 if $x < 2000 += $ci 1
 
-                if $x >= 500 if $x < 1500 -= $rx 500
-                if $x >= 500 if $x < 1500 += $ci 1
-
-                if $x >= 1500 -= $rx 1500
-                if $x >= 1500 += $ci 2
+                if $x >= 2000 -= $rx 2000
+                if $x >= 2000 += $ci 2
 
                 return $rx x
                 return $ry y
